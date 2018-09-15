@@ -1,12 +1,19 @@
 
 // a list of our game elements put at the beginning so preload, create and update can access them. 
-var player; 
+var player;
+var gravity=500;
 var coins;
 var walls;
 var enemies;
 var splat;
 var reload;
 var cursor;
+var level;
+var wlevel;
+var level1;
+var level2;
+var level3;
+
 
 
 // the following javascript object called playState contains all the active code for this simple game, you can add other states like, win, lose, start etc
@@ -14,23 +21,24 @@ var cursor;
 var playState = {  
 
 
-    init: function() {  
+    init: function(wlevel) {  
         // Here reset score when play state starts
-     score = 0;
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.pageAlignHorizontally = true;
-    game.scale.pageAlignVertically = true;
-      
+      score = 0;
+      game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+      game.scale.pageAlignHorizontally = true;
+      game.scale.pageAlignVertically = true;
+      wlevel = wlevel;
+
     },
   
     preload: function() {  
       
       // Here we preload the image assets - make more here http://piskelapp.com
       game.load.crossOrigin = 'anonymous';
-      game.load.image('player', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1171931/player.png');
-      game.load.image('wall', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1171931/wall.png');
-      game.load.image('coin', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1171931/coin.png');
-      game.load.image('enemy', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1171931/enemy.png');
+      game.load.image('player', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKUlEQVRIie3NoQEAAAgDoP3/8ZKeoYFAJtPOhYjFYrFYLBaLxWKx+G+8cOTYhPAlQ2YAAAAASUVORK5CYII=');
+      game.load.image('wall', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAALElEQVRIie3NMQEAAAQAMIcw+qfQihgcO3YvsnouhFgsFovFYrFYLBaL/8YLUq7ap4GwZIYAAAAASUVORK5CYII=');
+      game.load.image('coin', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAK0lEQVRIie3NoQEAAAQAMMH/xVO+4gzCwvKiK+dCiMVisVgsFovFYrH4b7wNhlLxXKUgugAAAABJRU5ErkJggg==');
+      game.load.image('enemy', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKElEQVRIie3NoQEAAAjAoP3/tJ6hgUCmqbmQWCwWi8VisVgsFov/xgvVbAFikbDobAAAAABJRU5ErkJggg==');
       
           // Here we preload the audio assets - make more here http://sfbgames.com/chiptone/  
       game.load.audio('win', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1171931/win.wav');
@@ -51,13 +59,11 @@ var playState = {
       cursor = game.input.keyboard.createCursorKeys();
       
       // add the main player to the game 70 pixels to the left and 100 pixels down from the top
-      player = game.add.sprite(70, 100, 'player');
+      player = game.add.sprite(20, 100, 'player');
 
-      // increase the size of the player by 50%
-      player.scale.setTo(1.5);
 
       //add gravity to the player so that it falls down
-      player.body.gravity.y = 500;
+      player.body.gravity.y = gravity;
       
       // don't let the player leave the screen area
       player.body.collideWorldBounds=true;
@@ -75,40 +81,80 @@ var playState = {
       coins = game.add.group();
       enemies = game.add.group();
 
-// Design the level. x = wall, o = coin, ! = lava.
-var level = [
-    'xxxxxxxxxxxxxxxxxxxxxx',
-    '!         !          x',
-    '!                 o  x',
-    '!         o          x',
-    '!                    x',
-    '!     o   !    x     x',
-    'xxxxxxxxxxxxxxxx!!!!!x',
-];
-
+// Design the level. x = platform, o = coin, h = hazard.
+      level3 = [
+          '                 ',
+          '                o',
+          '                 ',
+          '      o h    xxxx',
+          '      xxx        ',
+          '    o            ',
+          '                 ',
+          '  xxxx          o',
+          '     o    xxxx   ',
+          '                 ',
+          '    o   h    h   ',
+          'xxxxxxxxxxxxxxxxx',
+      ];
+      
+      level2 = [
+          '                o',
+          '                 ',
+          '                 ',
+          '                 ',
+          '         o       ',
+          '        xxxxx    ',
+          '                 ',
+          '     o          ',
+          '   xxxx          ',
+          '                 ',
+          '    o        h   ',
+          'xxxxxxxxxxxxxxxxx',
+      ];
+      
+      level1 = [
+          '                 ',
+          '                 ',
+          '    o            ',
+          '                 ',
+          '  xxxxx          ',
+          '                ',
+          '                 ',
+          '                o',
+          '             xxxx',
+          '                 ',
+          '    o   h    h   ',
+          'xxxxxxxxxxxxxxxxx',
+      ];
+      if (!wlevel ||  wlevel ==1)
+        level = level1;
+  
+      else if (wlevel == 2 )
+        level = level2;
+ 
+     else if (wlevel == 3 )
+        level = level3;
+      
 // Create the level by going through the array
 for (var i = 0; i < level.length; i++) {
     for (var j = 0; j < level[i].length; j++) {
 
         // Create a wall and add it to the 'walls' group
         if (level[i][j] == 'x') {
-          var wall = game.add.sprite(30+30*j, 30+30*i, 'wall');
-          wall.scale.setTo(1.5);
+          var wall = game.add.sprite(0+32*j, 0+32*i, 'wall');
           walls.add(wall);
           wall.body.immovable = true; 
         }
 
         // Create a coin and add it to the 'coins' group
         else if (level[i][j] == 'o') {
-            var coin = game.add.sprite(30+30*j, 30+30*i, 'coin');
-            coin.scale.setTo(1.5);
+            var coin = game.add.sprite(0+32*j, 0+32*i, 'coin');
             coins.add(coin);
         }
 
         // Create a enemy and add it to the 'enemies' group
-        else if (level[i][j] == '!') {
-            var enemy = game.add.sprite(30+30*j, 30+30*i, 'enemy');
-            enemy.scale.setTo(1.5);
+        else if (level[i][j] == 'h') {
+            var enemy = game.add.sprite(0+32*j, 0+32*i, 'enemy');
 
             enemies.add(enemy);
         }
@@ -130,53 +176,55 @@ for (var i = 0; i < level.length; i++) {
         game.physics.arcade.overlap(player, coins, this.takeCoin, null, this);
 
         // Call the 'lose' function when the player touches the enemy
-        game.physics.arcade.overlap(player, enemies, this.lose, null, this);
+        game.physics.arcade.overlap(player, enemies, this.restart, null, this);
              
 
         // add the controls for the cursor keys
         if (cursor.left.isDown) 
-            player.body.velocity.x = -200;
+            player.body.velocity.x = -100;
         else if (cursor.right.isDown) 
-            player.body.velocity.x = 200;
+            player.body.velocity.x = 100;
         else 
             player.body.velocity.x = 0;
      
               // Make the player jump if he is touching the ground
         if (cursor.up.isDown && player.body.touching.down) 
-            player.body.velocity.y = -250;
-  
+            player.body.velocity.y = -300;
+
+      if (coins.total == 0)
+         this.nextlevel();
+
     },
   
     // Function to kill/disappear a coin if player touches it
     takeCoin: function(player, coin) {
         coin.kill();
-      
-        //increase the score by one if a coin is taken
-        score = score +1;
-      
-        // restart the game dependent on score count of coin              
-        if (score == 3)
-           this.win();
-    },
+        win.play();  
 
-      // Function to restart the game when a player touches an enemy
-    lose: function() {
-        splat.play();
-        game.state.start('main');
-    },  
-  
-    // Function to restart the game if there are no coins left
-    win: function() {
-        win.play();
-        game.state.start('main');
-    },
-  
+          },
+
+    // Function to restart the game
+    restart: function() {
+      wlevel=1;      
+      game.state.start('main',true,false, wlevel); 
+      splat.play();
+
+},
+
+      nextlevel: function() {      
+        win.play();  
+        if (!wlevel)
+          wlevel=1;
+        wlevel = wlevel+1
+        game.state.start('main',true,false, wlevel);
+},
   
 };
 
 // Initialize the game at a certain size 
-var game = new Phaser.Game(750, 300, Phaser.AUTO, "", "main", false, false);  
+var game = new Phaser.Game(550, 400, Phaser.AUTO, "", "main", false, false);  
 
 //Add and start our play state 
 game.state.add('main', playState);  
 game.state.start('main');
+
