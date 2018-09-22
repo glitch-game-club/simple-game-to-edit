@@ -1,3 +1,3 @@
-A Pen created at CodePen.io. You can find this one at https://codepen.io/mrmick/pen/MXNqqY.
+A simple game from the Web Games Clubs project. Find out more here: https://github.com/webgameclubs/edlab-gamemakers-club
 
  
