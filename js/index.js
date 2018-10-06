@@ -135,28 +135,7 @@ playState.create = function () {
         level = level3;
     }
 
-    // Create the level by going through the array
-    var i;
-    var j;
-    var wall;
-    var coin;
-    var enemy;
-    for (i = 0; i < level.length; i = i + 1) {
-        for (j = 0; j < level[i].length; j = j + 1) {
-            // Create a wall and add it to the 'walls' group
-            if (level[i][j] === "x") {
-                wall = game.add.sprite(0 + 32 * j, 0 + 32 * i, "wall");
-                walls.add(wall);
-                wall.body.immovable = true;
-            } else if (level[i][j] === "o") { // Create a coin and add it to the 'coins' group
-                coin = game.add.sprite(0 + 32 * j, 0 + 32 * i, "coin");
-                coins.add(coin);
-            } else if (level[i][j] === "h") { // Create a enemy and add it to the 'enemies' group
-                enemy = game.add.sprite(0 + 32 * j, 0 + 32 * i, "enemy");
-                enemies.add(enemy);
-            }
-        }
-    }
+    loadLevel(level);
 };
 
 playState.update = function () {
@@ -226,3 +205,26 @@ game = new Phaser.Game(550, 400, Phaser.AUTO, "", "main", false, false);
 game.state.add("main", playState);
 game.state.start("main");
 
+function loadLevel (level) {
+    // Create the level from the array of strings
+    var i;
+    var j;
+    var wall;
+    var coin;
+    var enemy;
+    for (i = 0; i < level.length; i = i + 1) {
+        for (j = 0; j < level[i].length; j = j + 1) {
+            if (level[i][j] === "x") { // Create a wall and add it to the 'walls' group
+                wall = game.add.sprite(0 + 32 * j, 0 + 32 * i, "wall");
+                wall.body.immovable = true;
+                walls.add(wall);
+            } else if (level[i][j] === "o") { // Create a coin and add it to the 'coins' group
+                coin = game.add.sprite(0 + 32 * j, 0 + 32 * i, "coin");
+                coins.add(coin);
+            } else if (level[i][j] === "h") { // Create a enemy and add it to the 'enemies' group
+                enemy = game.add.sprite(0 + 32 * j, 0 + 32 * i, "enemy");
+                enemies.add(enemy);
+            }
+        }
+    }
+}
