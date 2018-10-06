@@ -4,7 +4,7 @@
 var player;
 var gravity = 500;
 var playerMoveSpeed = 100;
-var playerJumpSpeed = 100;
+var playerJumpSpeed = 300;
 var coins;
 var walls;
 var enemies;
