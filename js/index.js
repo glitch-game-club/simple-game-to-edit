@@ -3,6 +3,8 @@
 // so preload, create and update can access them.
 var player;
 var gravity = 500;
+var playerMoveSpeed = 100;
+var playerJumpSpeed = 100;
 var coins;
 var walls;
 var enemies;
@@ -153,16 +155,16 @@ playState.update = function () {
 
     // add the controls for the cursor keys
     if (cursor.left.isDown) {
-        player.body.velocity.x = -100;
+        player.body.velocity.x = -playerMoveSpeed;
     } else if (cursor.right.isDown) {
-        player.body.velocity.x = 100;
+        player.body.velocity.x = playerMoveSpeed;
     } else {
         player.body.velocity.x = 0;
     }
 
     // Make the player jump if he is touching the ground
     if (cursor.up.isDown && player.body.touching.down) {
-        player.body.velocity.y = -300;
+        player.body.velocity.y = -playerJumpSpeed;
     }
 
     if (coins.total === 0) {
