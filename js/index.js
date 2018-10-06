@@ -8,7 +8,6 @@ var walls;
 var enemies;
 var splat;
 var cursor;
-var level;
 var wlevel;
 var level1;
 var level2;
@@ -128,14 +127,12 @@ playState.create = function () {
     ];
 
     if (!wlevel || wlevel === 1) {
-        level = level1;
+        loadLevel(level1);
     } else if (wlevel === 2) {
-        level = level2;
+        loadLevel(level2);
     } else if (wlevel === 3) {
-        level = level3;
+        loadLevel(level3);
     }
-
-    loadLevel(level);
 };
 
 playState.update = function () {
