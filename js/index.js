@@ -3,12 +3,13 @@
 // so preload, create and update can access them.
 var player;
 var gravity = 500;
+var playerMoveSpeed = 100;
+var playerJumpSpeed = 300;
 var coins;
 var walls;
 var enemies;
 var splat;
 var cursor;
-var level;
 var wlevel;
 var level1;
 var level2;
@@ -128,34 +129,11 @@ playState.create = function () {
     ];
 
     if (!wlevel || wlevel === 1) {
-        level = level1;
+        loadLevel(level1);
     } else if (wlevel === 2) {
-        level = level2;
+        loadLevel(level2);
     } else if (wlevel === 3) {
-        level = level3;
-    }
-
-    // Create the level by going through the array
-    var i;
-    var j;
-    var wall;
-    var coin;
-    var enemy;
-    for (i = 0; i < level.length; i = i + 1) {
-        for (j = 0; j < level[i].length; j = j + 1) {
-            // Create a wall and add it to the 'walls' group
-            if (level[i][j] === "x") {
-                wall = game.add.sprite(0 + 32 * j, 0 + 32 * i, "wall");
-                walls.add(wall);
-                wall.body.immovable = true;
-            } else if (level[i][j] === "o") { // Create a coin and add it to the 'coins' group
-                coin = game.add.sprite(0 + 32 * j, 0 + 32 * i, "coin");
-                coins.add(coin);
-            } else if (level[i][j] === "h") { // Create a enemy and add it to the 'enemies' group
-                enemy = game.add.sprite(0 + 32 * j, 0 + 32 * i, "enemy");
-                enemies.add(enemy);
-            }
-        }
+        loadLevel(level3);
     }
 };
 
@@ -177,16 +155,16 @@ playState.update = function () {
 
     // add the controls for the cursor keys
     if (cursor.left.isDown) {
-        player.body.velocity.x = -100;
+        player.body.velocity.x = -playerMoveSpeed;
     } else if (cursor.right.isDown) {
-        player.body.velocity.x = 100;
+        player.body.velocity.x = playerMoveSpeed;
     } else {
         player.body.velocity.x = 0;
     }
 
     // Make the player jump if he is touching the ground
     if (cursor.up.isDown && player.body.touching.down) {
-        player.body.velocity.y = -300;
+        player.body.velocity.y = -playerJumpSpeed;
     }
 
     if (coins.total === 0) {
@@ -226,3 +204,26 @@ game = new Phaser.Game(550, 400, Phaser.AUTO, "", "main", false, false);
 game.state.add("main", playState);
 game.state.start("main");
 
+function loadLevel (level) {
+    // Create the level from the array of strings
+    var i;
+    var j;
+    var wall;
+    var coin;
+    var enemy;
+    for (i = 0; i < level.length; i = i + 1) {
+        for (j = 0; j < level[i].length; j = j + 1) {
+            if (level[i][j] === "x") { // Create a wall and add it to the 'walls' group
+                wall = game.add.sprite(0 + 32 * j, 0 + 32 * i, "wall");
+                wall.body.immovable = true;
+                walls.add(wall);
+            } else if (level[i][j] === "o") { // Create a coin and add it to the 'coins' group
+                coin = game.add.sprite(0 + 32 * j, 0 + 32 * i, "coin");
+                coins.add(coin);
+            } else if (level[i][j] === "h") { // Create a enemy and add it to the 'enemies' group
+                enemy = game.add.sprite(0 + 32 * j, 0 + 32 * i, "enemy");
+                enemies.add(enemy);
+            }
+        }
+    }
+}
