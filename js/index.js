@@ -15,7 +15,6 @@ var walls;
 var enemies;
 
 // Keeping track of the player
-var cursor;
 var currentLevel;
 var level1;
 var level2;
@@ -63,7 +62,7 @@ playState.create = function () {
     game.world.enableBody = true;
 
     // set up cursor keys to allow user input (the options are set in update)
-    cursor = game.input.keyboard.createCursorKeys();
+    game.cursor = game.input.keyboard.createCursorKeys();
 
     // add the main player to the game 70 pixels to the left and 100 pixels down from the top
     player = game.add.sprite(20, 100, "player");
@@ -160,16 +159,16 @@ playState.update = function () {
 
 
     // add the controls for the cursor keys
-    if (cursor.left.isDown) {
+    if (game.cursor.left.isDown) {
         player.body.velocity.x = -playerMoveSpeed;
-    } else if (cursor.right.isDown) {
+    } else if (game.cursor.right.isDown) {
         player.body.velocity.x = playerMoveSpeed;
     } else {
         player.body.velocity.x = 0;
     }
 
     // Make the player jump if he is touching the ground
-    if (cursor.up.isDown && player.body.touching.down) {
+    if (game.cursor.up.isDown && player.body.touching.down) {
         player.body.velocity.y = -playerJumpSpeed;
     }
 
