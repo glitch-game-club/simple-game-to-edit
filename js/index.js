@@ -42,6 +42,7 @@ playState.preload = function () {
     // Here we preload the image assets - make more here http://piskelapp.com
     game.load.crossOrigin = "anonymous";
     game.load.image("player", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKUlEQVRIie3NoQEAAAgDoP3/8ZKeoYFAJtPOhYjFYrFYLBaLxWKx+G+8cOTYhPAlQ2YAAAAASUVORK5CYII=");
+    //game.load.spritesheet('player', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAABACAYAAAB7jnWuAAAAPUlEQVRoge3SMQEAAAyDsPo3vcngCQpysIsbAAAAAAAAAAAAAAAAAEAOkPIJAQAAAAAAAAAAAAAAAABqwAOdyOO0PP/+wQAAAABJRU5ErkJggg==',32,32); 
     game.load.image("wall", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAALElEQVRIie3NMQEAAAQAMIcw+qfQihgcO3YvsnouhFgsFovFYrFYLBaL/8YLUq7ap4GwZIYAAAAASUVORK5CYII=");
     game.load.image("coin", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAK0lEQVRIie3NoQEAAAQAMMH/xVO+4gzCwvKiK+dCiMVisVgsFovFYrH4b7wNhlLxXKUgugAAAABJRU5ErkJggg==");
     game.load.image("enemy", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKElEQVRIie3NoQEAAAjAoP3/tJ6hgUCmqbmQWCwWi8VisVgsFov/xgvVbAFikbDobAAAAABJRU5ErkJggg==");
@@ -66,7 +67,8 @@ playState.create = function () {
 
     // add the main player to the game 70 pixels to the left and 100 pixels down from the top
     player = game.add.sprite(20, 100, "player");
-
+    //player.animations.add("move", [0, 1], 3, true);
+    //player.animations.play("move");
 
     //add gravity to the player so that it falls down
     player.body.gravity.y = gravity;
