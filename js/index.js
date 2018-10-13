@@ -1,27 +1,32 @@
 "use strict";
 // a list of our game elements put at the beginning
 // so preload, create and update can access them.
-var player;
+
+// Things that change how the game works
 var gravity = 500;
 var playerMoveSpeed = 100;
 var playerJumpSpeed = 300;
+
+// Parts of the game
+var game;
+var player;
 var coins;
 var walls;
 var enemies;
-var splat;
-var cursor;
-var wlevel;
+
+// Keeping track of the player
+var currentLevel;
 var level1;
 var level2;
 var level3;
 var score;
-var win;
-var game;
 
+// Noises in the game
+var splatNoise;
+var winNoise;
 
-
-// the following javascript object called playState contains all the active code for this simple game, you can add other states like, win, lose, start etc
-
+// The following javascript object called playState contains all the active code for this simple game.
+// You can add other states like, win, lose, start etc
 var playState = {};
 playState.init = function (levelToRun) {
     // Here reset score when play state starts
@@ -29,7 +34,7 @@ playState.init = function (levelToRun) {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
-    wlevel = levelToRun;
+    currentLevel = levelToRun;
 
 };
 
@@ -57,7 +62,7 @@ playState.create = function () {
     game.world.enableBody = true;
 
     // set up cursor keys to allow user input (the options are set in update)
-    cursor = game.input.keyboard.createCursorKeys();
+    game.cursor = game.input.keyboard.createCursorKeys();
 
     // add the main player to the game 70 pixels to the left and 100 pixels down from the top
     player = game.add.sprite(20, 100, "player");
@@ -71,8 +76,8 @@ playState.create = function () {
 
 
     // add audio to two variable ready to play later in other functions
-    splat = game.add.audio("splat");
-    win = game.add.audio("win");
+    splatNoise = game.add.audio("splat");
+    winNoise = game.add.audio("win");
 
 
     //create groups for the walls, coins and enemies - what ever happens to the group happens
@@ -128,11 +133,11 @@ playState.create = function () {
         "xxxxxxxxxxxxxxxxx"
     ];
 
-    if (!wlevel || wlevel === 1) {
+    if (!currentLevel || currentLevel === 1) {
         loadLevel(level1);
-    } else if (wlevel === 2) {
+    } else if (currentLevel === 2) {
         loadLevel(level2);
-    } else if (wlevel === 3) {
+    } else if (currentLevel === 3) {
         loadLevel(level3);
     }
 };
@@ -154,16 +159,16 @@ playState.update = function () {
 
 
     // add the controls for the cursor keys
-    if (cursor.left.isDown) {
+    if (game.cursor.left.isDown) {
         player.body.velocity.x = -playerMoveSpeed;
-    } else if (cursor.right.isDown) {
+    } else if (game.cursor.right.isDown) {
         player.body.velocity.x = playerMoveSpeed;
     } else {
         player.body.velocity.x = 0;
     }
 
     // Make the player jump if he is touching the ground
-    if (cursor.up.isDown && player.body.touching.down) {
+    if (game.cursor.up.isDown && player.body.touching.down) {
         player.body.velocity.y = -playerJumpSpeed;
     }
 
@@ -176,25 +181,25 @@ playState.update = function () {
 playState.takeCoin = function (player, coin) {
     // Function to kill/disappear a coin if player touches it
     coin.kill();
-    win.play();
+    winNoise.play();
 
 };
 
 // Function to restart the game
 playState.restart = function () {
-    wlevel = 1;
-    game.state.start("main", true, false, wlevel);
-    splat.play();
+    currentLevel = 1;
+    game.state.start("main", true, false, currentLevel);
+    splatNoise.play();
 
 };
 
 playState.nextlevel = function () {
-    win.play();
-    if (!wlevel) {
-        wlevel = 1;
+    winNoise.play();
+    if (!currentLevel) {
+        currentLevel = 1;
     }
-    wlevel = wlevel + 1;
-    game.state.start("main", true, false, wlevel);
+    currentLevel = currentLevel + 1;
+    game.state.start("main", true, false, currentLevel);
 };
 
 // Initialize the game at a certain size
